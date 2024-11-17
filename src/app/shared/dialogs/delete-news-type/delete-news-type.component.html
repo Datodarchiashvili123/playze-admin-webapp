@@ -1,0 +1,29 @@
+<div class="p-8 bg-[#1b1b1b]">
+  <img
+    src="../../../../assets/icons/radiation.svg"
+    alt="DELETE"
+    class="mx-auto mb-8"
+  />
+  <h2 class="text-white text-center mb-8">
+    Are you sure that you want to delete
+    <span class="text-[#c9ff58]">{{ this.data }}</span
+    >?
+  </h2>
+  <div class="text-center">
+    <button
+      type="button"
+      (click)="this._dialog.close()"
+      class="text-white bg-red-700 hover:bg-red-800 outline-none focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+    >
+      No
+    </button>
+
+    <button
+      type="button"
+      (click)="this._dialog.close(true)"
+      class="text-white bg-green-700 hover:bg-green-800 !outline-none focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+    >
+      Yes
+    </button>
+  </div>
+</div>

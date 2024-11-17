@@ -1,0 +1,44 @@
+<div class="pagination">
+  <button class="pagination__button" (click)="prev()" [disabled]="!hasPrevious">
+    <img
+      width="16"
+      height="16"
+      ngSrc="../../assets/svg/left-arrow.svg"
+      alt=""
+    />
+    <p>Previous</p>
+  </button>
+
+  <div class="pagination__page__container">
+    <ng-container *ngFor="let page of pages; let i = index">
+      <div
+        class="pagination__page"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        <p>{{ page }}</p>
+      </div>
+
+      <!-- Dots if needed -->
+      <ng-container
+        *ngIf="
+          i === pages.length - 2 &&
+          showDots &&
+          pages[pages.length - 2] < totalPages - 1
+        "
+      >
+        <div class="pagination__page--dots">...</div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <button class="pagination__button" (click)="next()" [disabled]="!hasNext">
+    <p>Next</p>
+    <img
+      width="16"
+      height="16"
+      ngSrc="../../assets/svg/right-arrow.svg"
+      alt=""
+    />
+  </button>
+</div>

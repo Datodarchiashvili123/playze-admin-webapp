@@ -1,0 +1,203 @@
+<div class="p-8 bg-[#1b1b1b] min-w-[60vw] max-h-[90vh] overflow-y-auto">
+  <h3 class="text-white font-bold mb-5 text-2xl">Add a new announcement</h3>
+  <form [formGroup]="newsForm" (ngSubmit)="submitNews()">
+    <div>
+      <label
+        for="title"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Title</label
+      >
+      <input
+        type="text"
+        formControlName="headline"
+        id="title"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Title"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="PrimaryKeyword"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Primary keyword</label
+      >
+      <input
+        type="text"
+        id="PrimaryKeyword"
+        formControlName="primaryKeyword"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="PrimaryKeyword"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="typeId"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >News type</label
+      >
+      <select
+        id="typeId"
+        formControlName="typeId"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+      >
+        <option value="0">Select News Type</option>
+        <option
+          *ngFor="let type of this.newsTypesService.newsTypes()"
+          [value]="type.id"
+        >
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+    <div class="relative my-4">
+      <label
+        for="dropdownSearchButton"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Related games</label
+      >
+      <div
+        class="flex flex-wrap gap-2 max-w-[900px] select-none"
+        [ngClass]="selectedGames.length > 0 ? 'my-2' : ''"
+      >
+        <span
+          class="px-3 py-2 border border-gray-500 rounded-3xl hover:bg-gray-800 text-white relative"
+          *ngFor="let game of selectedGames"
+        >
+          <span class="pe-6">{{ game.name }}</span>
+          <span
+            class="cursor-pointer absolute top-1/2 right-3 -translate-y-1/2 hover:text-red-700 hover:-rotate-90 transition-all"
+            (click)="removeGame(game)"
+            >&#10005;</span
+          >
+        </span>
+      </div>
+      <button
+        id="dropdownSearchButton"
+        data-dropdown-toggle="dropdownSearch"
+        data-dropdown-placement="bottom"
+        class="text-white w-full focus:outline-none font-medium rounded-lg text-sm my-2 ps-4 pe-1 py-2.5 text-center inline-flex items-center dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        type="button"
+        (click)="show()"
+      >
+        Select multiple games
+        <svg
+          class="w-2.5 h-2.5 ms-auto"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 10 6"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m1 1 4 4 4-4"
+          />
+        </svg>
+      </button>
+
+      <!-- Dropdown menu -->
+      <div
+        *ngIf="toggle"
+        id="dropdownSearch"
+        class="z-10 absolute right-0 left-0 bg-white rounded-lg shadow dark:bg-gray-700 w-full"
+      >
+        <div class="p-3">
+          <label for="input-group-search" class="sr-only">Search</label>
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+            >
+              <svg
+                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              id="input-group-search"
+              (input)="filterGames()"
+              [(ngModel)]="filterText"
+              [ngModelOptions]="{ standalone: true }"
+              class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              placeholder="Search games"
+            />
+          </div>
+        </div>
+        <ul
+          class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownSearchButton"
+        >
+          <li *ngFor="let game of this.games">
+            <button
+              class="cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 w-full"
+              (click)="addGames(game)"
+            >
+              {{ game.name }}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="my-4">
+      <label
+        for="Content"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Content</label
+      >
+      <app-pl-editor
+        ngDefaultControl
+        formControlName="contentHtml"
+        [content]="editorContent"
+        (contentChange)="onEditorContentChange($event)"
+      ></app-pl-editor>
+    </div>
+
+    <div>
+      <label
+        class="block my-4 border border-dashed border-gray-400 hover:bg-gray-800 rounded-2xl py-4 text-center w-full text-sm font-medium text-gray-900 dark:text-white cursor-pointer"
+        for="file_input"
+        >Upload a photo</label
+      >
+      <input
+        class="hidden"
+        id="file_input"
+        accept="image/*"
+        type="file"
+        formControlName="file"
+        (change)="onFileSelected($event)"
+      />
+    </div>
+    <div *ngIf="selectedImage" class="mt-4">
+      <img
+        [src]="selectedImage"
+        alt="Uploaded preview"
+        class="max-w-[300px] h-auto mx-auto rounded-lg shadow-lg"
+      />
+    </div>
+    <div class="text-center my-8">
+      <button
+        type="submit"
+        class="sign-in-btn w-6/12 text-black bg-[#c9ff58] hover:bg-[#b3e24e] focus:ring-none focus:outline-none font-bold rounded-3xl text-sm px-5 py-2.5 text-center"
+      >
+        <span> Submit </span>
+        <div class="loader mx-auto"></div>
+      </button>
+    </div>
+  </form>
+</div>

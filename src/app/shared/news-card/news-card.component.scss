@@ -1,0 +1,202 @@
+// Variables
+$primary-bg: #1a1a1a;
+$border-color: #4a503b;
+$hover-border-color: #97ff10;
+$text-color: white;
+$secondary-text: #9ca3af;
+$dark-bg: #121212;
+
+// Mixins
+@mixin corner-cut($size, $color, $position) {
+  content: "";
+  position: absolute;
+  width: 1px;
+
+  @if $position == "top-left" {
+    top: -2px;
+    left: -2px;
+    border-top: $size solid $color;
+    border-right: $size solid transparent;
+  } @else if $position == "bottom-right" {
+    bottom: -2px;
+    right: -2px;
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+  }
+}
+
+@mixin diagonal-line {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 39px;
+  background-color: $border-color;
+  border-radius: 20px 20px 0 0;
+}
+
+// Main Styles
+.news-card {
+  position: relative;
+  max-width: 1000px;
+  margin-bottom: 1.25rem;
+  background-color: $primary-bg;
+  color: $text-color;
+  border: 1px solid $border-color;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: $hover-border-color;
+
+    .card-content {
+      &::before,
+      &::after {
+        background-color: $hover-border-color;
+      }
+    }
+  }
+
+  &::before {
+    @include corner-cut(30px, $dark-bg, "bottom-right");
+  }
+
+  &::after {
+    @include corner-cut(30px, $dark-bg, "top-left");
+  }
+}
+
+.card-content {
+  display: flex;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 10;
+
+  &::after {
+    @include diagonal-line;
+    top: 0;
+    left: 0;
+    transform: rotate(-45deg) translate(-13.8px, 4.75px);
+  }
+
+  &::before {
+    @include diagonal-line;
+    bottom: 0;
+    right: 0;
+    transform: rotate(-45deg) translate(13.8px, -4.75px);
+  }
+}
+
+.image-container {
+  position: relative;
+  height: 10rem;
+  overflow: hidden;
+  flex: 0 0 280px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 25px 0 25px 0;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-bottom: 25px solid $primary-bg;
+    border-left: 25px solid transparent;
+    width: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top: 25px solid $primary-bg;
+    border-top-left-radius: 100%;
+    border-right: 25px solid transparent;
+    width: 0;
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.timestamp {
+  color: $secondary-text;
+  font-size: 0.875rem;
+}
+
+.platforms {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.platform {
+  display: flex;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 800;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  color: $secondary-text;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.read-more {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-right: 0.25rem;
+  margin-top: auto;
+  cursor: pointer;
+  p {
+    margin: 0;
+    padding: 0;
+    color: $hover-border-color;
+    transition: color 0.2s;
+
+    &:hover {
+      color: lighten($hover-border-color, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Media Queries
+@media (max-width: 768px) {
+  .card-content {
+    flex-direction: column;
+  }
+
+  .image-container {
+    flex: none;
+    width: 100%;
+    height: 160px;
+  }
+}

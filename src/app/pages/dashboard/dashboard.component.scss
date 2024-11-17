@@ -1,0 +1,23 @@
+.sidebar-open .main-component {
+  margin-left: 300px;
+}
+
+:host(.sidebar-closed) .main-component {
+  margin-left: 0;
+}
+
+.main-component {
+  transition: all 0.5s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .main-component {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar-open .main-component {
+    margin-left: 0;
+    opacity: 0.7;
+  }
+}

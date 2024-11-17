@@ -1,0 +1,93 @@
+<div class="dash-component bg-[#121212] p-8 border border-[#caff5881] rounded">
+  <div class="flex justify-between items-center mb-8">
+    <div class="relative w-full max-w-80">
+      <div
+        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+      >
+        <svg
+          class="w-4 h-4 text-gray-500 dark:text-gray-400"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="type-search"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none"
+        placeholder="Search..."
+        [(ngModel)]="filterText"
+        (input)="loadNews()"
+        required
+      />
+    </div>
+    <div>
+      <button
+        (click)="addNewsDialog()"
+        class="text-gray-900 bg-gradient-to-r from-lime-200 via-[#c9ff58] to-[#9fcc3c] hover:bg-gradient-to-br focus:outline-none rounded-lg p-3 text-center"
+      >
+        <svg
+          class="hover:-rotate-90 transition-all"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <path
+              d="M4 12H20M12 4V20"
+              stroke="#1b1b1b"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="max-w-[1000px] mx-auto">
+    <div *ngFor="let item of news">
+      <app-news-card
+        [id]="item.id"
+        [imageUrl]="imageDomain + item.image"
+        [title]="item.headline"
+        [subtitle]="item.primaryKeyword"
+        [timeAgo]="item.createTime"
+        [category]="item.type"
+        [platforms]="[
+          '../../../assets/svg/fa_windows.svg',
+          '../../../assets/svg/fa-brands_playstation.svg'
+        ]"
+        [published]="item.isPublished"
+        [publishTime]="item.publishedTime"
+        (edited)="onNewsEdit($event)"
+        (deleted)="onNewsDeleted($event)"
+      >
+      </app-news-card>
+    </div>
+    <app-pagination
+      (pageChange)="onPageChange($event)"
+      [currentPage]="pageNumber"
+      [totalPages]="totalPages"
+      [hasNext]="hasNext"
+      [hasPrevious]="hasPrev"
+    ></app-pagination>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div>
+  <div class="nav-class">
+    <app-navbar
+      [isOpen]="isOpen"
+      (toggleSidebar)="toggleSidebar()"
+    ></app-navbar>
+  </div>
+  <div class="mx-10 flex text-white" [ngClass]="{ 'sidebar-open': isOpen }">
+    <div class="">
+      <app-sidebar [isOpen]="isOpen"></app-sidebar>
+    </div>
+    <div class="main-component grow">
+      <h2 class="mb-6">{{ this.sidebarService.selectedItem()?.name }}</h2>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+@media screen and (max-width: 778px) {
+  .pagination {
+    &__page__container {
+      order: -1;
+    }
+    &__button {
+      display: none !important;
+    }
+  }
+}
+
+.pagination{
+  display: flex;
+  padding: 12px 24px 16px 24px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  background: #242424;
+
+  &__page__container{
+    display: flex;
+    gap: 2px;
+  }
+
+  &__page{
+
+    display: flex;
+    width: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: 8px;
+    &--dots{
+      color: #667085;
+      font-family: "SF Pro Display", sans-serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 12px;
+    }
+    p{
+      color: var(--bg-neutral-lowest, #FFF);
+      font-family: "SF Pro Display",sans-serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px; /* 142.857% */
+    }
+    &.active{
+      background: #C9FF58;
+      p{
+        color: #000;
+        font-family: "SF Pro Display",sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px; /* 142.857% */
+      }
+    }
+  }
+
+  &__button{
+    cursor: pointer;
+    display: flex;
+    padding: 8px 8px 8px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 8px;
+    border: 1px solid #C9FF58;
+    background: rgba(201, 255, 88, 0.10);
+    img{
+
+    }
+    p{
+      color: #C9FF58;
+      text-align: center;
+      font-family: Jura,sans-serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 16px; /* 114.286% */
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+
+.pagination__page {
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.pagination__page.active {
+  font-weight: bold;
+  background-color: #C9FF58;
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination__button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination__button {
+  display: flex;
+  align-items: center;
+}
+
+p {
+  margin: 0;
+}

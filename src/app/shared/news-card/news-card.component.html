@@ -1,0 +1,60 @@
+<div class="news-card relative">
+  <div class="card-content">
+    <div class="image-container">
+      <img [src]="imageUrl" width="280" height="160" alt="Game preview" />
+    </div>
+
+    <div class="content">
+      <div class="meta">
+        <span class="timestamp">Added: {{ timeAgo }}</span>
+
+        <span class="timestamp" *ngIf="published"
+          >Published: {{ publishTime }}</span
+        >
+        <span
+          class="news-category"
+          [style]="
+            'background:' +
+            category.color +
+            '33; border: 1px solid ' +
+            category.color
+          "
+          >{{ category.name }}</span
+        >
+      </div>
+
+      <h2 class="title">{{ title }}</h2>
+      <p class="subtitle">{{ subtitle }}</p>
+
+      <div class="read-more" (click)="goToNewsDetail(id)">
+        <p>Read more</p>
+        <img src="../../../assets/svg/chevron-right.svg" alt="" />
+      </div>
+    </div>
+  </div>
+  <div class="absolute top-1 right-1 z-10 bg-[#1a1a1a] p-1 rounded">
+    <div class="flex items-center justify-between gap-2">
+      <label class="inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          [(ngModel)]="published"
+          (click)="changePublic()"
+          class="sr-only peer"
+        />
+        <div
+          class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#b1df4e]"
+        ></div>
+        <span
+          class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >{{ published ? "Published" : "Private" }}</span
+        >
+      </label>
+      <span class="cursor-pointer" (click)="edit()">
+        <img src="../../../assets/svg/edit.svg" alt="edit" />
+      </span>
+      <span class="cursor-pointer" (click)="remove()">
+        <img src="../../../assets/svg/delete.svg" alt="delete" />
+      </span>
+    </div>
+  </div>
+</div>

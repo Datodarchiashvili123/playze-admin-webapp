@@ -1,0 +1,119 @@
+<div class="bg-[#121212] p-8 dash-component border border-[#caff5881] rounded">
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="flex justify-between items-center">
+      <div class="relative w-full max-w-80">
+        <div
+          class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+        >
+          <svg
+            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+            />
+          </svg>
+        </div>
+        <input
+          type="text"
+          id="type-search"
+          [(ngModel)]="filterText"
+          (input)="onSearchChange($event)"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:outline-none"
+          placeholder="Search type"
+        />
+      </div>
+      <div>
+        <button
+          (click)="openEditDialog(null)"
+          class="text-gray-900 bg-gradient-to-r from-lime-200 via-[#c9ff58] to-[#9fcc3c] hover:bg-gradient-to-br focus:outline-none rounded-lg p-3 text-center"
+        >
+          <svg
+            class="hover:-rotate-90 transition-all"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M4 12H20M12 4V20"
+                stroke="#1b1b1b"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <table
+      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mt-10"
+    >
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr class="rounded-sm">
+          <th scope="col" class="px-6 py-3 !rounded-sm">Type name</th>
+          <th scope="col" class="px-6 py-3 w-20">Edit</th>
+          <th scope="col" class="px-6 py-3 w-20">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let type of this.newsTypesService.newsTypes()"
+          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+        >
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            <span
+              class="news-category"
+              [style]="
+                'background:' +
+                type.color +
+                '33; border: 1px solid ' +
+                type.color
+              "
+              >{{ type.name }}</span
+            >
+          </th>
+          <td class="px-6 py-4">
+            <span (click)="openEditDialog(type)" class="cursor-pointer">
+              <img
+                src="../../../assets/icons/edit-icon.svg"
+                alt="Edit"
+                class="mx-auto"
+              />
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span (click)="openDeleteTypeDialog(type)" class="cursor-pointer">
+              <img
+                src="../../../assets/icons/delete-icon.svg"
+                alt="Del"
+                class="mx-auto"
+              />
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

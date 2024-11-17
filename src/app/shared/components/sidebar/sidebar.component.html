@@ -1,0 +1,66 @@
+<aside
+  id="sidebar-multi-level-sidebar"
+  class="fixed top-[68px] bottom-10 left-10 z-40 w-64 transition-transform transform sidebar-component bg-[#121212]"
+  aria-label="Sidebar"
+  [@sidebarState]="isOpen ? 'open' : 'closed'"
+>
+  <div class="h-full px-3 py-8 overflow-y-auto">
+    <ul class="space-y-2 font-medium">
+      <li *ngFor="let item of navigation$()">
+        <button
+          type="button"
+          class="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-lg group border border-[#11111100] hover:border-[#b3e24e] hover:border"
+          [ngClass]="{
+            '!border-[#b3e24e] !border': item.selected || item.hasSelectedChild
+          }"
+          (click)="onSelectItem(item, $event)"
+        >
+          <img
+            [src]="'assets/icons/' + item.icon + '.svg'"
+            class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+          />
+          <span
+            class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap"
+            >{{ item.name }}</span
+          >
+          <svg
+            *ngIf="item.children.length > 0"
+            class="w-3 h-3 transform transition-transform duration-300"
+            [ngClass]="{ 'rotate-180': item.selected }"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+
+        <ul
+          *ngIf="item.children.length > 0"
+          class="overflow-hidden ms-4 mt-4 px-2 border-l border-[#b3e24e]"
+          [style.height]="
+            item.selected ? item.children.length * 50 + 'px' : '0px'
+          "
+          [style.transition]="'height 0.3s ease'"
+        >
+          <li class="mt-2" *ngFor="let child of item.children">
+            <p
+              (click)="onSelectItem(child, $event)"
+              class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-4 group hover:bg-[#c9ff5833] cursor-pointer"
+              [ngClass]="{ 'bg-[#c9ff5833]': child.selected }"
+            >
+              {{ child.name }}
+            </p>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</aside>
