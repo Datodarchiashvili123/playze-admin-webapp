@@ -1,0 +1,105 @@
+<div class="p-8 bg-[#1b1b1b] min-w-[60vw] max-h-[90vh] overflow-y-auto">
+  <h3 class="text-white font-bold mb-5 text-2xl">Add a new user</h3>
+  <form [formGroup]="userForm" (ngSubmit)="submit()">
+    <div>
+      <label
+        for="firstName"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >First Name</label
+      >
+      <input
+        type="text"
+        formControlName="firstName"
+        id="firstName"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="First Name"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="lastName"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Last Name</label
+      >
+      <input
+        type="text"
+        id="lastName"
+        formControlName="lastName"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Last Name"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="email"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Email</label
+      >
+      <input
+        type="text"
+        id="email"
+        formControlName="email"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Email"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="role"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Role</label
+      >
+      <select
+        id="role"
+        formControlName="role"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+      >
+        <option value="0">Select User Role</option>
+        <option [value]="1">Content Creator</option>
+      </select>
+    </div>
+    <div class="my-4">
+      <label
+        for="password"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Password</label
+      >
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Password"
+        required
+      />
+    </div>
+    <div class="my-4">
+      <label
+        for="confirmPassword"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Confirm Password</label
+      >
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Confirm Password"
+        required
+      />
+    </div>
+
+    <div class="text-center my-8">
+      <button
+        type="submit"
+        class="sign-in-btn w-6/12 text-black bg-[#c9ff58] hover:bg-[#b3e24e] focus:ring-none focus:outline-none font-bold rounded-3xl text-sm px-5 py-2.5 text-center"
+      >
+        <span> Submit </span>
+        <div class="loader mx-auto"></div>
+      </button>
+    </div>
+  </form>
+</div>
