@@ -16,9 +16,16 @@ export interface NavigationModel {
 })
 export class NavigationService {
   private _navigation = signal<NavigationModel[]>([
+    // {
+    //   icon: 'dashboard-icon',
+    //   name: 'Dashboard',
+    //   navigate: '/dashboard/user',
+    //   selected: true,
+    //   children: [],
+    // },
     {
-      icon: 'dashboard-icon',
-      name: 'Dashboard',
+      icon: 'users-icon',
+      name: 'Users',
       navigate: '/dashboard/user',
       selected: true,
       children: [],
