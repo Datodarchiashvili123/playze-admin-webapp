@@ -3,13 +3,12 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
 import { NewsCardComponent } from '../../shared/news-card/news-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddNewsAnnComponent } from '../../shared/dialogs/add-news-ann/add-news-ann.component';
-import { Router } from '@angular/router';
 import { AnnouncementService } from './announcement.service';
 import { AnnouncementItemModel } from '../../shared/models/announcement-item.model';
 import { PagedListModel } from '../../shared/models/paged-list.model';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-announcement',
@@ -52,15 +51,6 @@ export class AnnouncementComponent implements OnInit {
         this.hasNext = this.pagedList.hasNext;
         this.hasPrev = this.pagedList.hasPrevious;
       });
-  }
-
-  openEditDialog(type: AnnouncementItemModel | null) {
-    const dialog = this._dialog.open(AddNewsAnnComponent, { data: type });
-    dialog.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadNews();
-      }
-    });
   }
 
   onNewsEdit(newsId: string) {

@@ -42,20 +42,24 @@ export class NewsCardComponent {
   }
 
   edit() {
-    const dialog = this._dialog.open(AddNewsAnnComponent, {
-      data: {
-        title: this.title,
-        subtitle: this.subtitle,
-        category: this.category,
-        imageUrl: this.imageUrl,
-        contentHtml: '',
-        relatedGames: [],
-      },
-    });
-
-    dialog.afterClosed().subscribe((result) => {
-      if (result) {
-      }
+    this._announcementService.getNewsById(this.id).subscribe((result) => {
+      const data = result.parameters[result.key];
+      const dialog = this._dialog.open(AddNewsAnnComponent, {
+        data: {
+          id: data.id,
+          title: data.title,
+          subtitle: data.primaryKeyWord,
+          category: this.category,
+          imageUrl: this.imageUrl,
+          contentHtml: data.content,
+          relatedGames: data.games,
+        },
+      });
+      dialog.afterClosed().subscribe((result) => {
+        if (result) {
+          this.edited.emit(this.id);
+        }
+      });
     });
   }
 

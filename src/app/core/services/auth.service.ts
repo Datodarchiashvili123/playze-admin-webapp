@@ -7,6 +7,9 @@ import { HttpService } from './http.service';
   providedIn: 'root',
 })
 export class AuthService {
+  jwtToken() {
+    throw new Error('Method not implemented.');
+  }
   public accessToken = signal<string>('');
   public refreshToken = signal<string>('');
   public roles = signal<string[]>([]);

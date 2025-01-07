@@ -13,7 +13,6 @@ import { PlEditorComponent } from '../../components/pl-editor/pl-editor.componen
 import { AnnouncementService } from '../../../pages/announcement/announcement.service';
 import { AnnouncementTypeModel } from '../../models/announcement-type.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AnnouncementItemModel } from '../../models/announcement-item.model';
 
 @Component({
   selector: 'app-add-news-ann',
@@ -26,7 +25,7 @@ export class AddNewsAnnComponent implements OnInit {
   public newsTypesService = inject(NewsTypesService);
   public announcementService = inject(AnnouncementService);
   private _builder = inject(FormBuilder);
-
+  formHeader = '';
   title: string = '';
   subtitle: string = '';
   category!: AnnouncementTypeModel;
@@ -35,23 +34,15 @@ export class AddNewsAnnComponent implements OnInit {
     public _dialog: MatDialogRef<AddNewsAnnComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
+      id: string;
       title: string;
       subtitle: string;
       category: AnnouncementTypeModel;
       contentHtml?: string;
-      relatedGames?: KeyValuePairModel[];
+      relatedGames?: number[];
       imageUrl?: string;
     }
-  ) {
-    if (data) {
-      this.title = data.title;
-      this.subtitle = data.subtitle;
-      this.category = data.category;
-      this.selectedGames = data.relatedGames ?? [];
-      this.selectedImage = data.imageUrl ?? null;
-      this.editorContent = data.contentHtml ?? '';
-    }
-  }
+  ) {}
 
   newsForm!: FormGroup;
 
@@ -67,8 +58,8 @@ export class AddNewsAnnComponent implements OnInit {
 
   ngOnInit() {
     this.initTypes();
-    this.initForm();
     this.initGames();
+    this.initForm();
   }
 
   initForm() {
@@ -80,7 +71,7 @@ export class AddNewsAnnComponent implements OnInit {
       ],
       typeId: [this.category ? this.category.id : '', [Validators.required]],
       contentHtml: [this.editorContent, [Validators.required]],
-      file: ['', [Validators.required]],
+      file: [''],
     });
   }
 
@@ -105,16 +96,32 @@ export class AddNewsAnnComponent implements OnInit {
         formData.append('relatedGames[]', gameId.id);
       });
 
-      this.announcementService.uploadNews(formData).subscribe(
-        (result) => {
-          this.isLoading = false;
+      if (this.data) {
+        formData.append('id', this.data.id);
 
-          this._dialog.close(true);
-        },
-        (error) => {
-          this.isLoading = false;
-        }
-      );
+        this.announcementService.updateNews(formData).subscribe(
+          (result) => {
+            this.isLoading = false;
+
+            this._dialog.close(true);
+          },
+          (error) => {
+            this.isLoading = false;
+          }
+        );
+      } else {
+        if (!this.imageFile) return;
+        this.announcementService.uploadNews(formData).subscribe(
+          (result) => {
+            this.isLoading = false;
+
+            this._dialog.close(true);
+          },
+          (error) => {
+            this.isLoading = false;
+          }
+        );
+      }
     }
   }
 
@@ -149,6 +156,21 @@ export class AddNewsAnnComponent implements OnInit {
   initGames() {
     this.announcementService.getGames('').subscribe((result) => {
       this.games = result.parameters[result.key] as KeyValuePairModel[];
+
+      if (this.data) {
+        this.formHeader = 'Edit News';
+        this.title = this.data.title;
+        this.subtitle = this.data.subtitle;
+        this.category = this.data.category;
+        this.selectedGames = this.games.filter((game) =>
+          this.data.relatedGames?.includes(parseInt(game.id))
+        );
+        this.selectedImage = this.data.imageUrl ?? null;
+        this.editorContent = this.data.contentHtml ?? '';
+      } else {
+        this.formHeader = 'Add a new announcement';
+      }
+      this.initForm();
     });
   }
 

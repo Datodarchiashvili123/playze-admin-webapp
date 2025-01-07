@@ -2,10 +2,11 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
+  HttpHandlerFn,
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
@@ -14,6 +15,8 @@ import {
   finalize,
   from,
   Observable,
+  of,
+  shareReplay,
   switchMap,
   take,
   throwError,
@@ -21,111 +24,98 @@ import {
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<string | null> =
-    new BehaviorSubject<string | null>(null);
-  private cachedRequests: HttpRequest<any>[] = [];
+let isRefreshing = false;
+let refreshTokenSubject = new BehaviorSubject<string | null>(null);
+let refreshTokenRequest: Observable<any> | null = null;
 
-  constructor(private _authService: AuthService, private router: Router) {}
+export function AuthInterceptor(
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<any>> {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    const token = this._authService.accessToken();
-    let authReq = req;
+  const token = authService.accessToken();
+  let authReq = req;
 
-    if (token) {
-      authReq = this.addTokenHeader(req, token);
-    }
+  if (token) {
+    authReq = addTokenHeader(req, token);
+  }
 
-    return next.handle(authReq).pipe(
-      catchError((error) => {
-        if (
-          error instanceof HttpErrorResponse &&
-          error.status === 401 &&
-          !req.url.includes('refresh-access-token')
-        ) {
-          return this.handle401Error(authReq, next);
-        } else {
-          return throwError(() => error);
+  return next(authReq).pipe(
+    catchError((error) => {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 401 &&
+        !req.url.includes('refresh-access-token')
+      ) {
+        return handleTokenRefresh(authService, router).pipe(
+          switchMap((newToken) => {
+            if (newToken) {
+              return next(addTokenHeader(authReq, newToken));
+            } else {
+              authService.signOut();
+              router.navigateByUrl('/sign-in');
+              return throwError(() => new Error('Token refresh failed'));
+            }
+          })
+        );
+      }
+      return throwError(() => error);
+    })
+  );
+}
+
+function addTokenHeader(request: HttpRequest<any>, token: string) {
+  return request.clone({
+    headers: request.headers.set('Authorization', 'Bearer ' + token),
+  });
+}
+
+function handleTokenRefresh(
+  authService: AuthService,
+  router: Router
+): Observable<string | null> {
+  if (!refreshTokenRequest) {
+    isRefreshing = true;
+    refreshTokenSubject.next(null);
+
+    refreshTokenRequest = authService.refreshAccessToken().pipe(
+      switchMap((response: any) => {
+        const newToken = response.Parameters.jwt.AccessToken;
+        const newRefreshToken = response.Parameters.jwt.RefreshToken;
+
+        if (newToken) {
+          authService.accessToken.set(newToken);
+          authService.refreshToken.set(newRefreshToken);
+
+          localStorage.setItem(
+            authService.localStorageAccessTokenName,
+            newToken
+          );
+          localStorage.setItem(
+            authService.localStorageRefreshTokenName,
+            newRefreshToken
+          );
+
+          refreshTokenSubject.next(newToken);
+          return of(newToken);
         }
-      })
+
+        return of(null);
+      }),
+      catchError((error) => {
+        authService.signOut();
+        router.navigateByUrl('/sign-in');
+        return of(null);
+      }),
+      finalize(() => {
+        isRefreshing = false;
+        refreshTokenRequest = null;
+      }),
+      shareReplay(1)
     );
   }
 
-  private addTokenHeader(request: HttpRequest<any>, token: string) {
-    return request.clone({
-      headers: request.headers.set('Authorization', 'Bearer ' + token),
-    });
-  }
-
-  private handle401Error(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
-      this.cachedRequests.push(request);
-
-      return this._authService.refreshAccessToken().pipe(
-        switchMap((response: any) => {
-          this.isRefreshing = false;
-          const newToken = response.parameters.auth.accessToken;
-          const newRefreshToken = response.parameters.auth.refreshToken;
-
-          if (newToken) {
-            this._authService.accessToken.set(newToken);
-            this._authService.refreshToken.set(newRefreshToken);
-
-            localStorage.setItem(
-              this._authService.localStorageAccessTokenName,
-              newToken
-            );
-            localStorage.setItem(
-              this._authService.localStorageRefreshTokenName,
-              newRefreshToken
-            );
-
-            this.refreshTokenSubject.next(newToken);
-
-            return from(this.cachedRequests).pipe(
-              take(1),
-              concatMap((req) =>
-                next.handle(this.addTokenHeader(req, newToken))
-              ),
-              finalize(() => {
-                this.cachedRequests = [];
-              })
-            );
-          } else {
-            this._authService.signOut();
-            this.router.navigateByUrl('sign-in');
-            return throwError(() => new Error('No token returned'));
-          }
-        }),
-        catchError((err) => {
-          this.isRefreshing = false;
-          this._authService.signOut();
-          this.router.navigateByUrl('sign-in');
-          return throwError(() => err);
-        }),
-        finalize(() => {
-          this.isRefreshing = false;
-        })
-      );
-    } else {
-      this.cachedRequests.push(request);
-      return this.refreshTokenSubject.pipe(
-        filter((token) => token !== null),
-        take(1),
-        switchMap((token) => {
-          return next.handle(this.addTokenHeader(request, token as string));
-        })
-      );
-    }
-  }
+  return refreshTokenRequest;
 }

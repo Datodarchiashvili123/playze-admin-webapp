@@ -19,10 +19,22 @@ export class AnnouncementService {
     return this._httpService.post(`/announcements`, data);
   }
 
+  updateNews(data: any) {
+    return this._httpService.put(`/announcements`, data);
+  }
+
   getNews(headline: string, pageNumber: number, pageSize: number) {
     return this._httpService.get(
       `/announcements?PageNumber=${pageNumber}&PageSize=${pageSize}&Headline=${headline}`
     );
+  }
+
+  getNewsDetails(id: string) {
+    return this._httpService.get(`/announcements/${id}/details`);
+  }
+
+  getNewsById(id: string) {
+    return this._httpService.get(`/announcements/${id}`);
   }
 
   delete(id: string) {
