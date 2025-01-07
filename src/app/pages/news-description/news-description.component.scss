@@ -23,6 +23,13 @@
         p {
           color: white;
           margin: 10px 10px 14px 10px;
+          -webkit-box-orient: horizontal;
+          height: 20px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 260px;
+          display: block;
+          overflow: hidden;
         }
       }
     }
