@@ -1,0 +1,30 @@
+.related-games {
+  max-width: 1000px;
+  margin: 0 auto;
+  h2 {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+  }
+  &__box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    &__card {
+      border-radius: 12px;
+      background-color: #242424;
+      &__img {
+        img {
+          border-radius: 12px 12px 0 0 !important;
+        }
+      }
+      &__title {
+        p {
+          color: white;
+          margin: 10px 10px 14px 10px;
+        }
+      }
+    }
+  }
+}

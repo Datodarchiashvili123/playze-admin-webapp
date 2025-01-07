@@ -40,4 +40,25 @@
       ></div>
     </div>
   </div>
+  <div class="related-games">
+    <h2>Related Games</h2>
+    <div class="related-games__box">
+      @for (game of relatedGames; track $index) {
+        <!-- This link should be changed -->
+        <a class="related-games__box__card" [href]="'https://playze.io/games/' + game.urlName" target="_blank">
+          <div class="related-games__box__card__img">
+            <img
+              [ngSrc]="game.imgUrl"
+              [alt]="game.name"
+              width="280"
+              height="131"
+            />
+          </div>
+          <div class="related-games__box__card__title">
+            <p>{{ game.name }}</p>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
 </div>
