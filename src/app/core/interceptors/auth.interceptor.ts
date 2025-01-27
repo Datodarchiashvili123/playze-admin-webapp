@@ -82,22 +82,9 @@ function handleTokenRefresh(
 
     refreshTokenRequest = authService.refreshAccessToken().pipe(
       switchMap((response: any) => {
-        const newToken = response.Parameters.jwt.AccessToken;
-        const newRefreshToken = response.Parameters.jwt.RefreshToken;
+        const newToken = response.parameters['auth'].accessToken;
 
         if (newToken) {
-          authService.accessToken.set(newToken);
-          authService.refreshToken.set(newRefreshToken);
-
-          localStorage.setItem(
-            authService.localStorageAccessTokenName,
-            newToken
-          );
-          localStorage.setItem(
-            authService.localStorageRefreshTokenName,
-            newRefreshToken
-          );
-
           refreshTokenSubject.next(newToken);
           return of(newToken);
         }
