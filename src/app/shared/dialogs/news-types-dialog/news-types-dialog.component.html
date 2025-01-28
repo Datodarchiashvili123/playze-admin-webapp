@@ -1,4 +1,4 @@
-<div class="p-8 bg-[#1b1b1b] !min-w-[40vw]">
+<div class="p-8 bg-[#1b1b1b] !min-w-[40vw] relative">
   <div class="text-center">
     <h2 class="!mb-8 text-white text-2xl">
       {{ isEdited ? "Edit type" : "Add a new type" }}
@@ -38,4 +38,5 @@
       Submit
     </button>
   </div>
+  <img src="../../../../assets/svg/close.svg" class="close-btn" (click)="closeDialog()" alt="X">
 </div>

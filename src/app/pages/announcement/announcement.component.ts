@@ -67,7 +67,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   addNewsDialog() {
-    const dialog = this._dialog.open(AddNewsAnnComponent);
+    const dialog = this._dialog.open(AddNewsAnnComponent, {disableClose: true});
 
     dialog.afterClosed().subscribe((result) => {
       if (result) {
