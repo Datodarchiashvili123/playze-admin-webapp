@@ -44,4 +44,8 @@ export class NewsTypesDialogComponent {
         });
     }
   }
+
+  closeDialog() {
+    this._dialog.close();
+  }
 }

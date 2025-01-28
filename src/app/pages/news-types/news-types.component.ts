@@ -38,7 +38,7 @@ export class NewsTypesComponent implements OnInit {
   }
 
   openEditDialog(type: AnnouncementTypeModel | null) {
-    const dialog = this._dialog.open(NewsTypesDialogComponent, { data: type });
+    const dialog = this._dialog.open(NewsTypesDialogComponent, { disableClose: true, data: type });
     dialog.afterClosed().subscribe((result) => {
       if (result) {
         this.initTypes();

@@ -193,4 +193,8 @@ export class AddNewsAnnComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
+  closeDialog() {
+    this._dialog.close();
+  }
 }
