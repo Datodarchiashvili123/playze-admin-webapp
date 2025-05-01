@@ -30,8 +30,13 @@ export const DASHBOARD_ROUTES: Routes = [
       {
         path: 'user',
         loadComponent: () =>
-          import('../user/user.component').then(
-            (m) => m.UserComponent
+          import('../user/user.component').then((m) => m.UserComponent),
+      },
+      {
+        path: 'slider',
+        loadComponent: () =>
+          import('../home-slider/home-slider.component').then(
+            (m) => m.HomeSliderComponent
           ),
       },
       { path: '', redirectTo: '/dashboard/user', pathMatch: 'full' },
