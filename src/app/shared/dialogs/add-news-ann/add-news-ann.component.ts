@@ -41,6 +41,8 @@ export class AddNewsAnnComponent implements OnInit {
       contentHtml?: string;
       relatedGames?: number[];
       imageUrl?: string;
+      metaTitle?: string;
+      metaDescription?: string;
     }
   ) {}
 
@@ -69,6 +71,14 @@ export class AddNewsAnnComponent implements OnInit {
         this.subtitle,
         [Validators.required, Validators.maxLength(200)],
       ],
+      metaTitle: [
+        this.data?.metaTitle || '',
+        [Validators.maxLength(60)]
+      ],
+      metaDescription: [
+        this.data?.metaDescription || '',
+        [Validators.maxLength(160)]
+      ],
       typeId: [this.category ? this.category.id : '', [Validators.required]],
       contentHtml: [this.editorContent, [Validators.required]],
       file: [''],
@@ -89,6 +99,8 @@ export class AddNewsAnnComponent implements OnInit {
         this.newsForm.get('primaryKeyword')?.value
       );
       formData.append('contentHtml', this.newsForm.get('contentHtml')?.value);
+      formData.append('metaTitle', this.newsForm.get('metaTitle')?.value || '');
+      formData.append('metaDescription', this.newsForm.get('metaDescription')?.value || '');
       formData.append('isPublic', String(this.isPublic));
       formData.append('file', this.imageFile);
 

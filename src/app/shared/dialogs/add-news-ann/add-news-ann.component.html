@@ -31,6 +31,40 @@
         required
       />
     </div>
+    <!-- Meta Title Field -->
+    <div class="my-4">
+      <label
+        for="metaTitle"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Meta Title</label
+      >
+      <input
+        type="text"
+        id="metaTitle"
+        formControlName="metaTitle"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Enter meta title for SEO"
+        maxlength="60"
+      />
+      <small class="text-gray-400 text-xs">Recommended: 50-60 characters</small>
+    </div>
+    <!-- Meta Description Field -->
+    <div class="my-4">
+      <label
+        for="metaDescription"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Meta Description</label
+      >
+      <textarea
+        id="metaDescription"
+        formControlName="metaDescription"
+        rows="3"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        placeholder="Enter meta description for SEO"
+        maxlength="160"
+      ></textarea>
+      <small class="text-gray-400 text-xs">Recommended: 150-160 characters</small>
+    </div>
     <div class="my-4">
       <label
         for="typeId"
