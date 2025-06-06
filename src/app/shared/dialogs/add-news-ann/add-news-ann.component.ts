@@ -58,6 +58,11 @@ export class AddNewsAnnComponent implements OnInit {
   selectedGames: KeyValuePairModel[] = [];
   editorContent: string = '';
 
+  // Error handling properties
+  backendError: string = '';
+  fieldErrors: { [key: string]: string } = {};
+  showValidationErrors: boolean = false;
+
   ngOnInit() {
     this.initTypes();
     this.initGames();
@@ -81,7 +86,21 @@ export class AddNewsAnnComponent implements OnInit {
 
   submitNews() {
     if (this.isLoading) return;
+
+    // Clear previous errors
+    this.clearErrors();
+
+    // Mark all fields as touched to show validation errors
+    this.markFormGroupTouched(this.newsForm);
+    this.showValidationErrors = true;
+
     if (this.newsForm.valid) {
+      // Additional validation for file upload on create
+      if (!this.data && !this.imageFile) {
+        this.backendError = 'Please upload an image';
+        return;
+      }
+
       this.isLoading = true;
 
       const formData = new FormData();
@@ -101,9 +120,13 @@ export class AddNewsAnnComponent implements OnInit {
       formData.append('isPublic', String(this.isPublic));
       formData.append('file', this.imageFile);
 
-      this.selectedGames.forEach((gameId) => {
-        formData.append('relatedGames[]', gameId.id);
-      });
+      // Fix: Ensure selectedGames is always an array and properly handle related games
+      const safeSelectedGames = this.selectedGames || [];
+      if (safeSelectedGames.length > 0) {
+        safeSelectedGames.forEach((game) => {
+          formData.append('relatedGames[]', game.id);
+        });
+      }
 
       if (this.data) {
         formData.append('id', this.data.id);
@@ -111,41 +134,130 @@ export class AddNewsAnnComponent implements OnInit {
         this.announcementService.updateNews(formData).subscribe(
           (result) => {
             this.isLoading = false;
-
             this._dialog.close(true);
           },
           (error) => {
             this.isLoading = false;
+            this.handleBackendError(error);
           }
         );
       } else {
-        if (!this.imageFile) return;
         this.announcementService.uploadNews(formData).subscribe(
           (result) => {
             this.isLoading = false;
-
             this._dialog.close(true);
           },
           (error) => {
             this.isLoading = false;
+            this.handleBackendError(error);
           }
         );
       }
     }
   }
 
+  // Error handling methods
+  clearErrors() {
+    this.backendError = '';
+    this.fieldErrors = {};
+  }
+
+  markFormGroupTouched(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+    });
+  }
+
+  handleBackendError(error: any) {
+    console.error('Backend error:', error);
+
+    if (error.error && error.error.message) {
+      this.backendError = error.error.message;
+    } else if (error.error && error.error.errors) {
+      // Handle field-specific errors from backend
+      this.fieldErrors = error.error.errors;
+    } else if (error.message) {
+      this.backendError = error.message;
+    } else {
+      this.backendError = 'An unexpected error occurred. Please try again.';
+    }
+  }
+
+  // Validation error getters for template
+  getFieldError(fieldName: string): string {
+    const control = this.newsForm.get(fieldName);
+
+    // Check backend field errors first
+    if (this.fieldErrors[fieldName]) {
+      return this.fieldErrors[fieldName];
+    }
+
+    // Check frontend validation errors
+    if (control && control.invalid && (control.dirty || control.touched || this.showValidationErrors)) {
+      if (control.errors?.['required']) {
+        return this.getRequiredErrorMessage(fieldName);
+      }
+      if (control.errors?.['maxlength']) {
+        const maxLength = control.errors['maxlength'].requiredLength;
+        return `${this.getFieldDisplayName(fieldName)} cannot exceed ${maxLength} characters`;
+      }
+    }
+
+    return '';
+  }
+
+  getRequiredErrorMessage(fieldName: string): string {
+    const fieldDisplayName = this.getFieldDisplayName(fieldName);
+    return `${fieldDisplayName} is required`;
+  }
+
+  getFieldDisplayName(fieldName: string): string {
+    const displayNames: { [key: string]: string } = {
+      'headline': 'Title',
+      'primaryKeyword': 'Primary keyword',
+      'metaTitle': 'Meta title',
+      'metaDescription': 'Meta description',
+      'typeId': 'News type',
+      'contentHtml': 'Content'
+    };
+    return displayNames[fieldName] || fieldName;
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.newsForm.get(fieldName);
+    return !!(
+      (control && control.invalid && (control.dirty || control.touched || this.showValidationErrors)) ||
+      this.fieldErrors[fieldName]
+    );
+  }
+
   onEditorContentChange(content: string) {
     this.editorContent = content;
     this.newsForm.get('contentHtml')?.setValue(content);
+    // Clear content error when user starts typing
+    if (content && this.fieldErrors['contentHtml']) {
+      delete this.fieldErrors['contentHtml'];
+    }
   }
 
   addGames(game: KeyValuePairModel) {
-    var existingGames = this.selectedGames.find((x) => game.id === x.id);
-    if (existingGames) return;
+    // Fix: Ensure selectedGames is always an array
+    if (!this.selectedGames) {
+      this.selectedGames = [];
+    }
+
+    const existingGame = this.selectedGames.find((x) => game.id === x.id);
+    if (existingGame) return;
     this.selectedGames.push(game);
   }
 
   removeGame(game: KeyValuePairModel) {
+    // Fix: Ensure selectedGames is always an array
+    if (!this.selectedGames) {
+      this.selectedGames = [];
+      return;
+    }
     this.selectedGames = this.selectedGames.filter((x) => game.id != x.id);
   }
 
@@ -171,13 +283,19 @@ export class AddNewsAnnComponent implements OnInit {
         this.title = this.data.title;
         this.subtitle = this.data.subtitle;
         this.category = this.data.category;
+
+        // Fix: Ensure selectedGames is always an array, even if filter returns empty
+        const relatedGames = this.data.relatedGames || [];
         this.selectedGames = this.games.filter((game) =>
-          this.data.relatedGames?.includes(parseInt(game.id))
-        );
+          relatedGames.includes(parseInt(game.id))
+        ) || [];
+
         this.selectedImage = this.data.imageUrl ?? null;
         this.editorContent = this.data.contentHtml ?? '';
       } else {
         this.formHeader = 'Add a new announcement';
+        // Fix: Explicitly ensure selectedGames is an empty array for new announcements
+        this.selectedGames = [];
       }
       this.initForm();
     });
@@ -200,6 +318,11 @@ export class AddNewsAnnComponent implements OnInit {
         this.selectedImage = e.target.result;
       };
       reader.readAsDataURL(file);
+
+      // Clear backend error if image was the issue
+      if (this.backendError.includes('image')) {
+        this.backendError = '';
+      }
     }
   }
 
