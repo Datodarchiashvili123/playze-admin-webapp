@@ -71,14 +71,8 @@ export class AddNewsAnnComponent implements OnInit {
         this.subtitle,
         [Validators.required, Validators.maxLength(200)],
       ],
-      metaTitle: [
-        this.data?.metaTitle || '',
-        [Validators.maxLength(60)]
-      ],
-      metaDescription: [
-        this.data?.metaDescription || '',
-        [Validators.maxLength(160)]
-      ],
+      metaTitle: [this.data?.metaTitle || '', [Validators.required]],
+      metaDescription: [this.data?.metaDescription || '', [Validators.required]],
       typeId: [this.category ? this.category.id : '', [Validators.required]],
       contentHtml: [this.editorContent, [Validators.required]],
       file: [''],
@@ -100,7 +94,10 @@ export class AddNewsAnnComponent implements OnInit {
       );
       formData.append('contentHtml', this.newsForm.get('contentHtml')?.value);
       formData.append('metaTitle', this.newsForm.get('metaTitle')?.value || '');
-      formData.append('metaDescription', this.newsForm.get('metaDescription')?.value || '');
+      formData.append(
+        'metaDescription',
+        this.newsForm.get('metaDescription')?.value || ''
+      );
       formData.append('isPublic', String(this.isPublic));
       formData.append('file', this.imageFile);
 
